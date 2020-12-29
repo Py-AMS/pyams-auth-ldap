@@ -46,9 +46,12 @@ SEARCH_SCOPES_VOCABULARY = SimpleVocabulary([
 # Group members query mode
 #
 
+QUERY_MEMBERS_FROM_GROUP = 'group'
+QUERY_MEMBERS_FROM_MEMBER = 'member'
+
 GROUP_MEMBERS_QUERY_MODE = {
-    'group': _("Use group attribute to get members list"),
-    'member': _("Use member attribute to get groups list")
+    QUERY_MEMBERS_FROM_GROUP: _("Use group attribute to get members list"),
+    QUERY_MEMBERS_FROM_MEMBER: _("Use member attribute to get groups list")
 }
 
 GROUP_MEMBERS_QUERY_MODE_VOCABULARY = SimpleVocabulary([
@@ -60,10 +63,14 @@ GROUP_MEMBERS_QUERY_MODE_VOCABULARY = SimpleVocabulary([
 # Group mail mode
 #
 
+NO_GROUP_MAIL_MODE = 'none'
+INTERNAL_GROUP_MAIL_MODE = 'internal'
+REDIRECT_GROUP_MAIL_MODE = 'redirect'
+
 GROUP_MAIL_MODE = {
-    'none': _("none (only use members own mail address)"),
-    'internal': _("Use group internal attribute"),
-    'redirect': _("Use another group internal attribute")
+    NO_GROUP_MAIL_MODE: _("none (only use members own mail address)"),
+    INTERNAL_GROUP_MAIL_MODE: _("Use group internal attribute"),
+    REDIRECT_GROUP_MAIL_MODE: _("Use another group internal attribute")
 }
 
 GROUP_MAIL_MODE_VOCABULARY = SimpleVocabulary([
@@ -88,6 +95,11 @@ class ILDAPGroupInfo(ILDAPBaseInfo):
 
     def get_members(self):
         """Get all group members"""
+
+
+DEFAULT_UID_QUERY = '(uid={login})'
+DEFAULT_USER_SEARCH = '(|(givenName={query}*)(sn={query}*))'
+DEFAULT_GROUP_SEARCH = '(cn=*{query}*)'
 
 
 class ILDAPPlugin(IAuthenticationPlugin, IDirectorySearchPlugin):
@@ -124,7 +136,7 @@ class ILDAPPlugin(IAuthenticationPlugin, IDirectorySearchPlugin):
                            description=_("Query template used to authenticate user "
                                          "(you can replace login attribute with '{login}')"),
                            required=True,
-                           default='(uid={login})')
+                           default=DEFAULT_UID_QUERY)
 
     uid_attribute = TextLine(title=_("UID attribute"),
                              description=_("LDAP attribute used as principal identifier"),
@@ -135,7 +147,7 @@ class ILDAPPlugin(IAuthenticationPlugin, IDirectorySearchPlugin):
                          description=_("Query template used to get principal information "
                                        "(you can replace UID attribute with '{login}')"),
                          required=True,
-                         default="(uid={login})")
+                         default=DEFAULT_UID_QUERY)
 
     title_format = TextLine(title=_("Title format"),
                             description=_("Principal's title format string"),
@@ -232,22 +244,22 @@ class ILDAPPlugin(IAuthenticationPlugin, IDirectorySearchPlugin):
     users_select_query = TextLine(title=_("Users select query"),
                                   description=_("Query template used to select users"),
                                   required=True,
-                                  default='(|(givenName={query}*)(sn={query}*))')
+                                  default=DEFAULT_USER_SEARCH)
 
     users_search_query = TextLine(title=_("Users search query"),
                                   description=_("Query template used to search users"),
                                   required=True,
-                                  default='(|(givenName={query}*)(sn={query}*))')
+                                  default=DEFAULT_USER_SEARCH)
 
     groups_select_query = TextLine(title=_("Groups select query"),
                                    description=_("Query template used to select groups"),
                                    required=True,
-                                   default='(cn=*{query}*)')
+                                   default=DEFAULT_GROUP_SEARCH)
 
     groups_search_query = TextLine(title=_("Groups search query"),
                                    description=_("Query template used to search groups"),
                                    required=True,
-                                   default='(cn=*{query}*)')
+                                   default=DEFAULT_GROUP_SEARCH)
 
     def get_connection(self):
         """Get LDAP connection"""
