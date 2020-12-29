@@ -1,0 +1,349 @@
+#
+# SOME DESCRIPTIVE TITLE
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2020.
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE 1.0\n"
+"POT-Creation-Date: 2020-12-28 18:54+0100\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Lingua 3.10.dev0\n"
+
+#: ./src/pyams_auth_ldap/interfaces.py:35
+msgid "Base object"
+msgstr ""
+
+#: ./src/pyams_auth_ldap/interfaces.py:36
+msgid "Single level"
+msgstr ""
+
+#: ./src/pyams_auth_ldap/interfaces.py:37
+msgid "Whole subtree"
+msgstr ""
+
+#: ./src/pyams_auth_ldap/interfaces.py:50
+msgid "Use group attribute to get members list"
+msgstr ""
+
+#: ./src/pyams_auth_ldap/interfaces.py:51
+msgid "Use member attribute to get groups list"
+msgstr ""
+
+#: ./src/pyams_auth_ldap/interfaces.py:64
+msgid "none (only use members own mail address)"
+msgstr ""
+
+#: ./src/pyams_auth_ldap/interfaces.py:65
+msgid "Use group internal attribute"
+msgstr ""
+
+#: ./src/pyams_auth_ldap/interfaces.py:66
+msgid "Use another group internal attribute"
+msgstr ""
+
+#: ./src/pyams_auth_ldap/interfaces.py:96
+msgid "LDAP server URI"
+msgstr ""
+
+#: ./src/pyams_auth_ldap/interfaces.py:97
+msgid "Full URI (including protocol) of LDAP server"
+msgstr ""
+
+#: ./src/pyams_auth_ldap/interfaces.py:101
+msgid "Bind DN"
+msgstr ""
+
+#: ./src/pyams_auth_ldap/interfaces.py:102
+msgid "DN used for LDAP bind; keep empty for anonymous"
+msgstr ""
+
+#: ./src/pyams_auth_ldap/interfaces.py:105
+msgid "Bind password"
+msgstr ""
+
+#: ./src/pyams_auth_ldap/interfaces.py:106
+msgid "Password used for LDAP bind"
+msgstr ""
+
+#: ./src/pyams_auth_ldap/interfaces.py:109
+msgid "Base DN"
+msgstr ""
+
+#: ./src/pyams_auth_ldap/interfaces.py:110
+msgid "LDAP base DN"
+msgstr ""
+
+#: ./src/pyams_auth_ldap/interfaces.py:113
+msgid "Search scope"
+msgstr ""
+
+#: ./src/pyams_auth_ldap/interfaces.py:118
+msgid "Login attribute"
+msgstr ""
+
+#: ./src/pyams_auth_ldap/interfaces.py:119
+msgid "LDAP attribute used as user login"
+msgstr ""
+
+#: ./src/pyams_auth_ldap/interfaces.py:123
+msgid "Login query"
+msgstr ""
+
+#: ./src/pyams_auth_ldap/interfaces.py:124
+#, python-format
+msgid ""
+"Query template used to authenticate user (you can replace login attribute "
+"with '{login}')"
+msgstr ""
+
+#: ./src/pyams_auth_ldap/interfaces.py:129
+msgid "UID attribute"
+msgstr ""
+
+#: ./src/pyams_auth_ldap/interfaces.py:130
+msgid "LDAP attribute used as principal identifier"
+msgstr ""
+
+#: ./src/pyams_auth_ldap/interfaces.py:134
+msgid "UID query"
+msgstr ""
+
+#: ./src/pyams_auth_ldap/interfaces.py:135
+#, python-format
+msgid ""
+"Query template used to get principal information (you can replace UID "
+"attribute with '{login}')"
+msgstr ""
+
+#: ./src/pyams_auth_ldap/interfaces.py:140
+msgid "Title format"
+msgstr ""
+
+#: ./src/pyams_auth_ldap/interfaces.py:141
+#: ./src/pyams_auth_ldap/interfaces.py:177
+msgid "Principal's title format string"
+msgstr ""
+
+#: ./src/pyams_auth_ldap/interfaces.py:145
+#: ./src/pyams_auth_ldap/interfaces.py:220
+msgid "Mail attribute"
+msgstr ""
+
+#: ./src/pyams_auth_ldap/interfaces.py:146
+msgid "LDAP attribute storing mail address"
+msgstr ""
+
+#: ./src/pyams_auth_ldap/interfaces.py:150
+#: ./src/pyams_auth_ldap/interfaces.py:226
+msgid "Extra attributes"
+msgstr ""
+
+#: ./src/pyams_auth_ldap/interfaces.py:151
+msgid ""
+"Comma separated list of additional attributes which will be extracted by "
+"principals"
+msgstr ""
+
+#: ./src/pyams_auth_ldap/interfaces.py:156
+msgid "Groups base DN"
+msgstr ""
+
+#: ./src/pyams_auth_ldap/interfaces.py:157
+msgid "Base DN used to search LDAP groups; keep empty to disable groups usage"
+msgstr ""
+
+#: ./src/pyams_auth_ldap/interfaces.py:161
+msgid "Groups search scope"
+msgstr ""
+
+#: ./src/pyams_auth_ldap/interfaces.py:166
+msgid "Group prefix"
+msgstr ""
+
+#: ./src/pyams_auth_ldap/interfaces.py:167
+msgid "Prefix used to identify groups as principals"
+msgstr ""
+
+#: ./src/pyams_auth_ldap/interfaces.py:171
+msgid "Group UID attribute"
+msgstr ""
+
+#: ./src/pyams_auth_ldap/interfaces.py:172
+msgid "LDAP attribute used as group identifier"
+msgstr ""
+
+#: ./src/pyams_auth_ldap/interfaces.py:176
+msgid "Group title format"
+msgstr ""
+
+#: ./src/pyams_auth_ldap/interfaces.py:181
+msgid "Members query mode"
+msgstr ""
+
+#: ./src/pyams_auth_ldap/interfaces.py:182
+msgid "Define how groups members are defined"
+msgstr ""
+
+#: ./src/pyams_auth_ldap/interfaces.py:186
+msgid "Groups query"
+msgstr ""
+
+#: ./src/pyams_auth_ldap/interfaces.py:187
+#, python-format
+msgid ""
+"When members are stored inside a group attribute, this query template is used"
+" to get principal groups (based on DN and UID attributes called '{dn}' and "
+"'{login}')"
+msgstr ""
+
+#: ./src/pyams_auth_ldap/interfaces.py:194
+msgid "Group members attribute"
+msgstr ""
+
+#: ./src/pyams_auth_ldap/interfaces.py:195
+msgid ""
+"When groups members are stored inside a group attribute, this is the "
+"attribute name"
+msgstr ""
+
+#: ./src/pyams_auth_ldap/interfaces.py:201
+msgid "User groups attribute"
+msgstr ""
+
+#: ./src/pyams_auth_ldap/interfaces.py:202
+msgid ""
+"When user groups are stored inside a user attribute, this is the attribute "
+"name"
+msgstr ""
+
+#: ./src/pyams_auth_ldap/interfaces.py:207
+msgid "Group mail mode"
+msgstr ""
+
+#: ./src/pyams_auth_ldap/interfaces.py:208
+msgid "Define how an email can be sent to group members"
+msgstr ""
+
+#: ./src/pyams_auth_ldap/interfaces.py:213
+msgid "DN replace expression"
+msgstr ""
+
+#: ./src/pyams_auth_ldap/interfaces.py:214
+msgid ""
+"In 'redirect' mail mode, specify source and target DN parts, separated by a "
+"pipe"
+msgstr ""
+
+#: ./src/pyams_auth_ldap/interfaces.py:221
+msgid "In 'internal' mail mode, specify name of group mail attribute"
+msgstr ""
+
+#: ./src/pyams_auth_ldap/interfaces.py:227
+msgid ""
+"Comma separated list of additional attributes which will be extracted by "
+"groups principals"
+msgstr ""
+
+#: ./src/pyams_auth_ldap/interfaces.py:232
+msgid "Users select query"
+msgstr ""
+
+#: ./src/pyams_auth_ldap/interfaces.py:233
+msgid "Query template used to select users"
+msgstr ""
+
+#: ./src/pyams_auth_ldap/interfaces.py:237
+msgid "Users search query"
+msgstr ""
+
+#: ./src/pyams_auth_ldap/interfaces.py:238
+msgid "Query template used to search users"
+msgstr ""
+
+#: ./src/pyams_auth_ldap/interfaces.py:242
+msgid "Groups select query"
+msgstr ""
+
+#: ./src/pyams_auth_ldap/interfaces.py:243
+msgid "Query template used to select groups"
+msgstr ""
+
+#: ./src/pyams_auth_ldap/interfaces.py:247
+msgid "Groups search query"
+msgstr ""
+
+#: ./src/pyams_auth_ldap/interfaces.py:248
+msgid "Query template used to search groups"
+msgstr ""
+
+#: ./src/pyams_auth_ldap/zmi/__init__.py:64
+msgid "Add LDAP directory..."
+msgstr ""
+
+#: ./src/pyams_auth_ldap/zmi/__init__.py:75
+msgid "Add LDAP directory plug-in"
+msgstr ""
+
+#: ./src/pyams_auth_ldap/zmi/__init__.py:86
+msgid "LDAP directory plug-in"
+msgstr ""
+
+#: ./src/pyams_auth_ldap/zmi/__init__.py:95
+msgid "Connection"
+msgstr ""
+
+#: ./src/pyams_auth_ldap/zmi/__init__.py:107
+msgid "Users schema"
+msgstr ""
+
+#: ./src/pyams_auth_ldap/zmi/__init__.py:122
+msgid "Groups schema"
+msgstr ""
+
+#: ./src/pyams_auth_ldap/zmi/__init__.py:139
+msgid "Search settings"
+msgstr ""
+
+#: ./src/pyams_auth_ldap/zmi/__init__.py:153
+#: ./src/pyams_auth_ldap/zmi/__init__.py:166
+msgid "LDAP directory search form"
+msgstr ""
+
+#: ./src/pyams_auth_ldap/zmi/__init__.py:214
+msgid "UID"
+msgstr ""
+
+#: ./src/pyams_auth_ldap/zmi/__init__.py:226
+msgid "Common name"
+msgstr ""
+
+#: ./src/pyams_auth_ldap/zmi/__init__.py:238
+msgid "Mail address"
+msgstr ""
+
+#: ./src/pyams_auth_ldap/zmi/__init__.py:249
+msgid "Search results"
+msgstr ""
+
+#: ./src/pyams_auth_ldap/zmi/__init__.py:266
+msgid "LDAP entry attributes"
+msgstr ""
+
+#: ./src/pyams_auth_ldap/zmi/__init__.py:318
+msgid "Attribute"
+msgstr ""
+
+#: ./src/pyams_auth_ldap/zmi/__init__.py:331
+msgid "Value"
+msgstr ""
+
+#: ./src/pyams_auth_ldap/zmi/__init__.py:264
+msgid "unknown"
+msgstr ""

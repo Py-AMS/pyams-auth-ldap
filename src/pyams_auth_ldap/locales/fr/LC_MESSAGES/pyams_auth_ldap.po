@@ -1,0 +1,389 @@
+#
+# SOME DESCRIPTIVE TITLE
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2020.
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE 1.0\n"
+"POT-Creation-Date: 2020-12-28 18:54+0100\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Lingua 3.10.dev0\n"
+
+#: src/pyams_auth_ldap/interfaces.py:35
+msgid "Base object"
+msgstr "Objet de base"
+
+#: src/pyams_auth_ldap/interfaces.py:36
+msgid "Single level"
+msgstr "Un seul niveau"
+
+#: src/pyams_auth_ldap/interfaces.py:37
+msgid "Whole subtree"
+msgstr "Sous-arbre complet"
+
+#: src/pyams_auth_ldap/interfaces.py:50
+msgid "Use group attribute to get members list"
+msgstr "Un attribut du groupe contient la liste de ses membres"
+
+#: src/pyams_auth_ldap/interfaces.py:51
+msgid "Use member attribute to get groups list"
+msgstr "Un attribut de l'utilisateur contient la liste de ses groupes"
+
+#: src/pyams_auth_ldap/interfaces.py:64
+msgid "none (only use members own mail address)"
+msgstr "aucun (n'utiliser que l'adresse des membres)"
+
+#: src/pyams_auth_ldap/interfaces.py:65
+msgid "Use group internal attribute"
+msgstr "interne : utiliser un attribut interne du groupe"
+
+#: src/pyams_auth_ldap/interfaces.py:66
+msgid "Use another group internal attribute"
+msgstr "redirection : utiliser un attribut d'un autre groupe"
+
+#: src/pyams_auth_ldap/interfaces.py:96
+msgid "LDAP server URI"
+msgstr "URI du serveur LDAP"
+
+#: src/pyams_auth_ldap/interfaces.py:97
+msgid "Full URI (including protocol) of LDAP server"
+msgstr ""
+"URI complète (y compris le protocole et le numéro de port) du serveur LDAP"
+
+#: src/pyams_auth_ldap/interfaces.py:101
+msgid "Bind DN"
+msgstr "DN de connexion"
+
+#: src/pyams_auth_ldap/interfaces.py:102
+msgid "DN used for LDAP bind; keep empty for anonymous"
+msgstr ""
+"DN utilisé pour la connexion LDAP ; à laisser vide pour une connexion anonyme"
+
+#: src/pyams_auth_ldap/interfaces.py:105
+msgid "Bind password"
+msgstr "Mot de passe de connexion"
+
+#: src/pyams_auth_ldap/interfaces.py:106
+msgid "Password used for LDAP bind"
+msgstr ""
+"Mot de passe utilisé pour la connexion LDAP ; à laisser vide pour une "
+"connexion anonyme"
+
+#: src/pyams_auth_ldap/interfaces.py:109
+msgid "Base DN"
+msgstr "DN de base"
+
+#: src/pyams_auth_ldap/interfaces.py:110
+msgid "LDAP base DN"
+msgstr "DN de base utilisé pour la recherche des utilisateurs"
+
+#: src/pyams_auth_ldap/interfaces.py:113
+msgid "Search scope"
+msgstr "Portée de la recherche"
+
+#: src/pyams_auth_ldap/interfaces.py:118
+msgid "Login attribute"
+msgstr "Attribut de connexion"
+
+#: src/pyams_auth_ldap/interfaces.py:119
+msgid "LDAP attribute used as user login"
+msgstr "Attribut LDAP utilisé pour la connexion d'un utilisateur"
+
+#: src/pyams_auth_ldap/interfaces.py:123
+msgid "Login query"
+msgstr "Requête de connexion"
+
+#: src/pyams_auth_ldap/interfaces.py:124
+#, python-format
+msgid ""
+"Query template used to authenticate user (you can replace login attribute "
+"with '{login}')"
+msgstr ""
+"Modèle de la requête LDAP utilisée pour authentifier un utilisateur ; vous "
+"pouvez remplacer le login de l'utilisateur par '{login}'"
+
+#: src/pyams_auth_ldap/interfaces.py:129
+msgid "UID attribute"
+msgstr "Identifiant utilisateur"
+
+#: src/pyams_auth_ldap/interfaces.py:130
+msgid "LDAP attribute used as principal identifier"
+msgstr "Attribut LDAP utilisé pour l'identification d'un utilisateur"
+
+#: src/pyams_auth_ldap/interfaces.py:134
+msgid "UID query"
+msgstr "Recherche d'utilisateur"
+
+#: src/pyams_auth_ldap/interfaces.py:135
+#, python-format
+msgid ""
+"Query template used to get principal information (you can replace UID "
+"attribute with '{login}')"
+msgstr ""
+"Modèle de la requête LDAP utilisée pour rechercher un utilisateur à partir "
+"de son identifiant vous pouvez remplacer cet identifiant par '{login}' dans "
+"le modèle de requête"
+
+#: src/pyams_auth_ldap/interfaces.py:140
+msgid "Title format"
+msgstr "Format d'affichage"
+
+#: src/pyams_auth_ldap/interfaces.py:141 src/pyams_auth_ldap/interfaces.py:177
+msgid "Principal's title format string"
+msgstr ""
+"Modèle de la chaîne de formatage utilisée pour l'affichage du nom d'un "
+"utilisateur ; vous pouvez indiquer le nom de tous les attributs LDAP entre "
+"accolades"
+
+#: src/pyams_auth_ldap/interfaces.py:145 src/pyams_auth_ldap/interfaces.py:220
+msgid "Mail attribute"
+msgstr "Adresse de messagerie"
+
+#: src/pyams_auth_ldap/interfaces.py:146
+msgid "LDAP attribute storing mail address"
+msgstr "Nom de l'attribut LDAP contenant l'adresse de messagerie"
+
+#: src/pyams_auth_ldap/interfaces.py:150 src/pyams_auth_ldap/interfaces.py:226
+msgid "Extra attributes"
+msgstr "Autres attributs"
+
+#: src/pyams_auth_ldap/interfaces.py:151
+msgid ""
+"Comma separated list of additional attributes which will be extracted by "
+"principals"
+msgstr ""
+"Vous pouvez indiquer, en les séparant par des virgules, une liste "
+"d'attributs spécifiques qui seront extraits pour compléter les informations "
+"sur les utilisateurs lors de leur recherche"
+
+#: src/pyams_auth_ldap/interfaces.py:156
+msgid "Groups base DN"
+msgstr "DN de base des groupes"
+
+#: src/pyams_auth_ldap/interfaces.py:157
+msgid "Base DN used to search LDAP groups; keep empty to disable groups usage"
+msgstr ""
+"DN de base utilisé pour la recherche des groupes ; laissez ce champ vide "
+"pour désactiver cette recherche"
+
+#: src/pyams_auth_ldap/interfaces.py:161
+msgid "Groups search scope"
+msgstr "Portée de la recherche"
+
+#: src/pyams_auth_ldap/interfaces.py:166
+msgid "Group prefix"
+msgstr "Préfixe des groupes"
+
+#: src/pyams_auth_ldap/interfaces.py:167
+msgid "Prefix used to identify groups as principals"
+msgstr "Préfixe utiliser pour identifier les groupes en tant que mandants"
+
+#: src/pyams_auth_ldap/interfaces.py:171
+msgid "Group UID attribute"
+msgstr "Identifiant de groupe"
+
+#: src/pyams_auth_ldap/interfaces.py:172
+msgid "LDAP attribute used as group identifier"
+msgstr "Nom de l'attribut LDAP utilisé pour identifier les groupes"
+
+#: src/pyams_auth_ldap/interfaces.py:176
+msgid "Group title format"
+msgstr "Format d'affichage"
+
+#: src/pyams_auth_ldap/interfaces.py:181
+msgid "Members query mode"
+msgstr "Recherche des membres"
+
+#: src/pyams_auth_ldap/interfaces.py:182
+msgid "Define how groups members are defined"
+msgstr "Mode utilisé pour la recherche des membres d'un groupe"
+
+#: src/pyams_auth_ldap/interfaces.py:186
+msgid "Groups query"
+msgstr "Recherche des groupes"
+
+#: src/pyams_auth_ldap/interfaces.py:187
+#, python-format
+msgid ""
+"When members are stored inside a group attribute, this query template is "
+"used to get principal groups (based on DN and UID attributes called '{dn}' "
+"and '{login}')"
+msgstr ""
+"Lorsque les membres des groupes sont stockés dans un attribut du groupe, ce "
+"modèle de requête est utilisé pour extraire la liste des groupes d'un "
+"mandant ; vous pouvez indiquer le DN et l'UID de l'utilisateur dans ce "
+"modèle, sous la forme '{dn}' et '{login}'"
+
+#: src/pyams_auth_ldap/interfaces.py:194
+msgid "Group members attribute"
+msgstr "Attribut des membres"
+
+#: src/pyams_auth_ldap/interfaces.py:195
+msgid ""
+"When groups members are stored inside a group attribute, this is the "
+"attribute name"
+msgstr ""
+"Lorsque les membres des groupes sont stockés dans un attribut du groupe, "
+"indiquez ici le nom de cet attribut"
+
+#: src/pyams_auth_ldap/interfaces.py:201
+msgid "User groups attribute"
+msgstr "Attribut des groupes"
+
+#: src/pyams_auth_ldap/interfaces.py:202
+msgid ""
+"When user groups are stored inside a user attribute, this is the attribute "
+"name"
+msgstr ""
+"Lorsque la liste de ses groupes est stockée dans un attribut du membre, "
+"indiquez ici le nom de cet attribut"
+
+#: src/pyams_auth_ldap/interfaces.py:207
+msgid "Group mail mode"
+msgstr "Messagerie de groupe"
+
+#: src/pyams_auth_ldap/interfaces.py:208
+msgid "Define how an email can be sent to group members"
+msgstr ""
+"Indique la façon dont les messages doivent être envoyés aux membre d'un "
+"groupe"
+
+#: src/pyams_auth_ldap/interfaces.py:213
+msgid "DN replace expression"
+msgstr "Expression de remplacement"
+
+#: src/pyams_auth_ldap/interfaces.py:214
+msgid ""
+"In 'redirect' mail mode, specify source and target DN parts, separated by a "
+"pipe"
+msgstr ""
+"En mode 'redirection', vous pouvez indiquer les parties des DN source et "
+"cible, séparées par un pipe (|), pour réécrire le DN de la liste d'origine"
+
+#: src/pyams_auth_ldap/interfaces.py:221
+msgid "In 'internal' mail mode, specify name of group mail attribute"
+msgstr ""
+"En mode 'interne', spécifie le nom de l'attribut du groupe contenant son "
+"adresse de messagerie"
+
+#: src/pyams_auth_ldap/interfaces.py:227
+msgid ""
+"Comma separated list of additional attributes which will be extracted by "
+"groups principals"
+msgstr ""
+"Vous pouvez indiquer, en les séparant par des virgules, une liste "
+"d'attributs spécifiques qui seront extraits pour compléter les informations "
+"sur les groupes lors de leur recherche"
+
+#: src/pyams_auth_ldap/interfaces.py:232
+msgid "Users select query"
+msgstr "Sélection des utilisateurs"
+
+#: src/pyams_auth_ldap/interfaces.py:233
+msgid "Query template used to select users"
+msgstr ""
+"Modèle de requête LDAP utilisée pour effectuer la recherche de mandants"
+
+#: src/pyams_auth_ldap/interfaces.py:237
+msgid "Users search query"
+msgstr "Recherche des utilisateurs"
+
+#: src/pyams_auth_ldap/interfaces.py:238
+msgid "Query template used to search users"
+msgstr ""
+"Modèle de requête LDAP utilisée pour effectuer la recherche des utilisateurs "
+"dans le moteur de recherche de l'annuaire LDAP"
+
+#: src/pyams_auth_ldap/interfaces.py:242
+msgid "Groups select query"
+msgstr "Sélection des groupes"
+
+#: src/pyams_auth_ldap/interfaces.py:243
+msgid "Query template used to select groups"
+msgstr ""
+"Modèle de requête LDAP utilisée pour effectuer la recherche des groupes de mandants"
+
+#: src/pyams_auth_ldap/interfaces.py:247
+msgid "Groups search query"
+msgstr "Recherche des groupes"
+
+#: src/pyams_auth_ldap/interfaces.py:248
+msgid "Query template used to search groups"
+msgstr ""
+"Modèle de requête LDAP utilisée pour effectuer la recherche des groupes dans le moteur de "
+"recherche de l'annuaire LDAP"
+
+#: src/pyams_auth_ldap/zmi/__init__.py:64
+msgid "Add LDAP directory..."
+msgstr "Ajouter un annuaire LDAP..."
+
+#: src/pyams_auth_ldap/zmi/__init__.py:75
+msgid "Add LDAP directory plug-in"
+msgstr "Ajout d'un annuaire LDAP"
+
+#: src/pyams_auth_ldap/zmi/__init__.py:86
+msgid "LDAP directory plug-in"
+msgstr "Annuaire LDAP"
+
+#: src/pyams_auth_ldap/zmi/__init__.py:95
+msgid "Connection"
+msgstr "Connexion"
+
+#: src/pyams_auth_ldap/zmi/__init__.py:107
+msgid "Users schema"
+msgstr "Schéma des utilisateurs"
+
+#: src/pyams_auth_ldap/zmi/__init__.py:122
+msgid "Groups schema"
+msgstr "Schéma des groupes"
+
+#: src/pyams_auth_ldap/zmi/__init__.py:139
+msgid "Search settings"
+msgstr "Critères de recherche"
+
+#: src/pyams_auth_ldap/zmi/__init__.py:153
+#: src/pyams_auth_ldap/zmi/__init__.py:166
+msgid "LDAP directory search form"
+msgstr "Moteur de recherche LDAP"
+
+#: src/pyams_auth_ldap/zmi/__init__.py:214
+msgid "UID"
+msgstr "UID"
+
+#: src/pyams_auth_ldap/zmi/__init__.py:226
+msgid "Common name"
+msgstr "Nom courant"
+
+#: src/pyams_auth_ldap/zmi/__init__.py:238
+msgid "Mail address"
+msgstr "Adresse de messagerie"
+
+#: src/pyams_auth_ldap/zmi/__init__.py:249
+msgid "Search results"
+msgstr "Résultats de la recherche"
+
+#: src/pyams_auth_ldap/zmi/__init__.py:266
+msgid "LDAP entry attributes"
+msgstr "Attributs de l'entrée LDAP"
+
+#: src/pyams_auth_ldap/zmi/__init__.py:318
+msgid "Attribute"
+msgstr "Attribut"
+
+#: src/pyams_auth_ldap/zmi/__init__.py:331
+msgid "Value"
+msgstr "Valeur"
+
+#: src/pyams_auth_ldap/zmi/__init__.py:264
+msgid "unknown"
+msgstr "inconnu"
+
+#~ msgid "Comma separated list of additional attributes"
+#~ msgstr "Liste des attributs "
