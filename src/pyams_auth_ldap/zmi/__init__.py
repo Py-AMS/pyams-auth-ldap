@@ -326,6 +326,7 @@ class LDAPEntryPropertiesDisplayForm(AdminModalDisplayForm):
 
     @property
     def title(self):
+        """Form title getter"""
         return 'DN: {}'.format(self.ldap_entry.get('dn', _('unknown')))
 
     legend = _("LDAP entry attributes")
@@ -336,12 +337,12 @@ class LDAPEntryPropertiesDisplayForm(AdminModalDisplayForm):
         """LDAP entry getter"""
         plugin = self.context
         conn = plugin.get_connection()
-        dn = self.request.params.get('dn')
+        dn = self.request.params.get('dn')  # pylint: disable=invalid-name
         query = LDAPQuery(dn, '(objectclass=*)', BASE, ALL_ATTRIBUTES)
         result = query.execute(conn)
         if not result or len(result) > 1:
             return {}
-        dn, attributes = result[0]
+        dn, attributes = result[0]  # pylint: disable=invalid-name
         if 'jpegPhoto' in attributes:
             attributes['jpegPhoto'] = [
                 '<img src="data:image/jpeg;base64,{0}" />'.format(
