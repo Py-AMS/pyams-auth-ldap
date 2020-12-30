@@ -1,6 +1,10 @@
 Changelog
 =========
 
+1.0.2
+-----
+ - updated "find_principals()" method to use new "exact_match" argument
+
 1.0.1
 -----
  - code cleanup, added strings constants to reduce duplicated code
