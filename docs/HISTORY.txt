@@ -1,6 +1,10 @@
 Changelog
 =========
 
+1.0.3
+-----
+ - removed Travis-CI configuration
+
 1.0.2
 -----
  - updated "find_principals()" method to use new "exact_match" argument
