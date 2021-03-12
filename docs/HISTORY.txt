@@ -1,6 +1,11 @@
 Changelog
 =========
 
+1.1.0
+-----
+ - removed support for Python < 3.7
+ - handle single values in LDAP entry column renderer
+
 1.0.3
 -----
  - removed Travis-CI configuration

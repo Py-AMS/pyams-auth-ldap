@@ -183,7 +183,7 @@ msgstr "Préfixe des groupes"
 
 #: src/pyams_auth_ldap/interfaces.py:167
 msgid "Prefix used to identify groups as principals"
-msgstr "Préfixe utiliser pour identifier les groupes en tant que mandants"
+msgstr "Préfixe utilisé pour identifier les groupes en tant que mandataires"
 
 #: src/pyams_auth_ldap/interfaces.py:171
 msgid "Group UID attribute"
@@ -218,7 +218,7 @@ msgid ""
 msgstr ""
 "Lorsque les membres des groupes sont stockés dans un attribut du groupe, ce "
 "modèle de requête est utilisé pour extraire la liste des groupes d'un "
-"mandant ; vous pouvez indiquer le DN et l'UID de l'utilisateur dans ce "
+"mandataire ; vous pouvez indiquer le DN et l'UID de l'utilisateur dans ce "
 "modèle, sous la forme '{dn}' et '{login}'"
 
 #: src/pyams_auth_ldap/interfaces.py:194
@@ -289,7 +289,7 @@ msgstr "Sélection des utilisateurs"
 #: src/pyams_auth_ldap/interfaces.py:233
 msgid "Query template used to select users"
 msgstr ""
-"Modèle de requête LDAP utilisée pour effectuer la recherche de mandants"
+"Modèle de requête LDAP utilisée pour effectuer la recherche de mandataires"
 
 #: src/pyams_auth_ldap/interfaces.py:237
 msgid "Users search query"
@@ -308,7 +308,7 @@ msgstr "Sélection des groupes"
 #: src/pyams_auth_ldap/interfaces.py:243
 msgid "Query template used to select groups"
 msgstr ""
-"Modèle de requête LDAP utilisée pour effectuer la recherche des groupes de mandants"
+"Modèle de requête LDAP utilisée pour effectuer la recherche des groupes de mandataires"
 
 #: src/pyams_auth_ldap/interfaces.py:247
 msgid "Groups search query"
