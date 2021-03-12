@@ -398,4 +398,4 @@ class LDAPEntryValuesColumn(I18nColumnMixin, GetAttrColumn):
     weight = 20
 
     def get_value(self, obj):
-        return '<br />'.join(obj[1])
+        return '<br />'.join(obj[1] if isinstance(obj[1], (list, tuple)) else {obj[1]})
