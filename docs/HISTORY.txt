@@ -1,6 +1,10 @@
 Changelog
 =========
 
+1.1.1
+-----
+ - updated add menus registration for last PyAMS_zmi release
+
 1.1.0
 -----
  - removed support for Python < 3.7
