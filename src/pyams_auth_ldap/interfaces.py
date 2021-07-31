@@ -102,6 +102,9 @@ DEFAULT_USER_SEARCH = '(|(givenName={query}*)(sn={query}*))'
 DEFAULT_GROUP_SEARCH = '(cn=*{query}*)'
 
 
+LDAP_PLUGIN_LABEL = _("LDAP directory plug-in")
+
+
 class ILDAPPlugin(IAuthenticationPlugin, IDirectorySearchPlugin):
     """LDAP authentication plug-in interface"""
 

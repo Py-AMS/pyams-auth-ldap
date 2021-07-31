@@ -21,7 +21,7 @@ from ldap3 import ALL_ATTRIBUTES, BASE
 from pyramid.decorator import reify
 from zope.interface import Interface, implementer
 
-from pyams_auth_ldap.interfaces import ILDAPPlugin
+from pyams_auth_ldap.interfaces import ILDAPPlugin, LDAP_PLUGIN_LABEL
 from pyams_auth_ldap.query import LDAPQuery
 from pyams_form.ajax import ajax_form_config
 from pyams_form.browser.checkbox import SingleCheckBoxFieldWidget
@@ -33,8 +33,8 @@ from pyams_pagelet.pagelet import pagelet_config
 from pyams_security.interfaces import IPlugin, ISecurityManager
 from pyams_security.interfaces.base import MANAGE_SECURITY_PERMISSION
 from pyams_security_views.zmi import SecurityPluginsTable
-from pyams_security_views.zmi.plugin import SecurityPluginAddForm, SecurityPluginAddMenu, \
-    SecurityPluginPropertiesEditForm
+from pyams_security_views.zmi.plugin import InnerSecurityPluginFormMixin, SecurityPluginAddForm, \
+    SecurityPluginAddMenu, SecurityPluginPropertiesEditForm
 from pyams_site.interfaces import ISiteRoot
 from pyams_skin.interfaces.viewlet import IContentSuffixViewletManager
 from pyams_table.column import GetAttrColumn
@@ -59,6 +59,7 @@ from pyams_auth_ldap import _  # pylint: disable=ungrouped-imports
 # LDAP plug-in add form
 #
 
+
 @viewlet_config(name='add-ldap-plugin.menu',
                 context=ISiteRoot, layer=IAdminLayer, view=SecurityPluginsTable,
                 manager=IContextAddingsViewletManager, weight=45,
@@ -76,8 +77,8 @@ class LDAPPluginAddMenu(SecurityPluginAddMenu):
 class LDAPPluginAddForm(SecurityPluginAddForm):
     """LDAP plug-in add form"""
 
-    legend = _("Add LDAP directory plug-in")
     content_factory = ILDAPPlugin
+    content_label = LDAP_PLUGIN_LABEL
 
     fields = Fields(IPlugin).omit('__parent__', '__name__')
     fields['enabled'].widget_factory = SingleCheckBoxFieldWidget
@@ -147,8 +148,6 @@ class LDAPPluginSearchSettingsAddForm(InnerAddForm):
 @ajax_form_config(name='properties.html', context=ILDAPPlugin, layer=IPyAMSLayer)
 class LDAPPluginPropertiesEditForm(SecurityPluginPropertiesEditForm):
     """LDAP plug-in properties edit form"""
-
-    title = _("LDAP directory plug-in")
 
 
 @adapter_config(name='connection',
@@ -321,13 +320,15 @@ class LDAPPluginSearchResultsView(SearchResultsView):
 
 @pagelet_config(name='ldap-properties.html', context=ILDAPPlugin, layer=IPyAMSLayer,
                 permission=MANAGE_SECURITY_PERMISSION)
-class LDAPEntryPropertiesDisplayForm(AdminModalDisplayForm):
+class LDAPEntryPropertiesDisplayForm(InnerSecurityPluginFormMixin, AdminModalDisplayForm):
     """LDAP entry properties display form"""
 
     @property
     def title(self):
         """Form title getter"""
-        return 'DN: {}'.format(self.ldap_entry.get('dn', _('unknown')))
+        return '{}<br /><small>DN: {}</small>'.format(
+            super().title,
+            self.ldap_entry.get('dn', _('unknown')))
 
     legend = _("LDAP entry attributes")
     fields = Fields(Interface)
