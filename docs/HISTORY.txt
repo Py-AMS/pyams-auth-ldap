@@ -1,6 +1,10 @@
 Changelog
 =========
 
+1.1.2
+-----
+ - updated add and edit forms title
+
 1.1.1
 -----
  - updated add menus registration for last PyAMS_zmi release
