@@ -35,11 +35,11 @@ from pyams_security.interfaces.base import MANAGE_SECURITY_PERMISSION
 from pyams_security_views.zmi import SecurityPluginsTable
 from pyams_security_views.zmi.plugin import InnerSecurityPluginFormMixin, SecurityPluginAddForm, \
     SecurityPluginAddMenu, SecurityPluginPropertiesEditForm
-from pyams_site.interfaces import ISiteRoot
 from pyams_skin.interfaces.viewlet import IContentSuffixViewletManager
 from pyams_table.column import GetAttrColumn
 from pyams_table.interfaces import IColumn, IValues
 from pyams_utils.adapter import ContextRequestViewAdapter, adapter_config
+from pyams_utils.registry import get_utility
 from pyams_utils.url import absolute_url
 from pyams_viewlet.viewlet import viewlet_config
 from pyams_zmi.form import AdminModalDisplayForm
@@ -61,8 +61,8 @@ from pyams_auth_ldap import _  # pylint: disable=ungrouped-imports
 
 
 @viewlet_config(name='add-ldap-plugin.menu',
-                context=ISiteRoot, layer=IAdminLayer, view=SecurityPluginsTable,
-                manager=IContextAddingsViewletManager, weight=45,
+                context=ISecurityManager, layer=IAdminLayer, view=SecurityPluginsTable,
+                manager=IContextAddingsViewletManager, weight=40,
                 permission=MANAGE_SECURITY_PERMISSION)
 class LDAPPluginAddMenu(SecurityPluginAddMenu):
     """LDAP plug-in add menu"""
@@ -219,7 +219,8 @@ class LDAPPluginSearchForm(SearchForm):  # pylint: disable=abstract-method
     @property
     def back_url(self):
         """Form back URL getter"""
-        return absolute_url(self.request.root, self.request, 'security-plugins.html')
+        manager = get_utility(ISecurityManager)
+        return absolute_url(manager, self.request, 'security-plugins.html')
 
 
 @pagelet_config(name='search.html', context=ILDAPPlugin, layer=IPyAMSLayer,
