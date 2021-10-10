@@ -33,6 +33,7 @@ from pyams_auth_ldap.interfaces import ILDAPGroupInfo, ILDAPPlugin, ILDAPUserInf
     INTERNAL_GROUP_MAIL_MODE, NO_GROUP_MAIL_MODE, QUERY_MEMBERS_FROM_GROUP
 from pyams_auth_ldap.query import LDAPQuery
 from pyams_mail.interfaces import IPrincipalMailInfo
+from pyams_security.interfaces import PRINCIPAL_ID_FORMATTER
 from pyams_security.principal import PrincipalInfo
 from pyams_utils.adapter import ContextAdapter, adapter_config
 from pyams_utils.factory import factory_config
@@ -55,7 +56,6 @@ USER_ATTR_PREFIX = '{prefix}:{attr}'
 GROUP_DN_PREFIX = '{prefix}:{group_prefix}:{dn}'
 GROUP_ATTR_PREFIX = '{prefix}:{group_prefix}:{attr}'
 
-LOGIN_PREFIX = '{prefix}:{login}'
 GROUP_ID_PREFIX = '{prefix}:{group_prefix}:{group_id}'
 
 
@@ -379,12 +379,14 @@ class LDAPPlugin(Persistent, Contained):
             return None
         user_dn, attrs = result[0]
         if info:
-            return PrincipalInfo(id=LOGIN_PREFIX.format(prefix=self.prefix,
-                                                        login=login),
+            return PrincipalInfo(id=PRINCIPAL_ID_FORMATTER.format(prefix=self.prefix,
+                                                                  login=login),
                                  title=self.title_format.format(**attrs),
                                  dn=user_dn)
-        attrs.update({'principal_id': LOGIN_PREFIX.format(
-            prefix=self.prefix, login=login)})
+        attrs.update({
+            'principal_id': PRINCIPAL_ID_FORMATTER.format(prefix=self.prefix,
+                                                          login=login)
+        })
         return LDAPUserInfo(user_dn, attrs, self)
 
     def _get_groups(self, principal):
