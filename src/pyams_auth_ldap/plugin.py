@@ -122,7 +122,7 @@ class LDAPGroupMailInfoAdapter(ContextAdapter):
             # use group internal attribute
             mail = group.attributes.get(plugin.group_mail_attribute)
             if mail:
-                yield plugin.group_title_format(**group.attributes), \
+                yield plugin.group_title_format.format(**group.attributes), \
                       mail[0] if isinstance(mail, (list, tuple)) else mail
 
         else:  # REDIRECT_GROUP_MAIL_MODE
@@ -139,7 +139,7 @@ class LDAPGroupMailInfoAdapter(ContextAdapter):
             target_dn, attrs = result[0]
             mail = attrs.get(plugin.group_mail_attribute)
             if mail:
-                yield plugin.group_title_format(**attrs), \
+                yield plugin.group_title_format.format(**attrs), \
                       mail[0] if isinstance(mail, (list, tuple)) else mail
 
 
@@ -199,6 +199,8 @@ class LDAPPlugin(Persistent, Contained):
     _host = None
     _port = None
     _use_ssl = False
+
+    connection_manager_class = ConnectionManager
 
     _server_uri = FieldProperty(ILDAPPlugin['server_uri'])
     bind_dn = FieldProperty(ILDAPPlugin['bind_dn'])
@@ -293,7 +295,7 @@ class LDAPPlugin(Persistent, Contained):
         """Connection getter"""
         self_id = self._get_id()
         if self_id not in LDAP_MANAGERS:
-            LDAP_MANAGERS[self_id] = ConnectionManager(self)
+            LDAP_MANAGERS[self_id] = self.connection_manager_class(self)
         connection = LDAP_MANAGERS[self_id].get_connection(user, password)
         if connection.closed:
             connection.open(read_server_info=False)
