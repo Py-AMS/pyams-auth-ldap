@@ -332,7 +332,7 @@ class LDAPPlugin(Persistent, Contained):
                                                attr=attrs[self.uid_attribute][0])
             return None
 
-    def get_principal(self, principal_id, info=True):
+    def get_principal(self, principal_id, info=True):  # pylint: disable=too-many-return-statements,too-many-branches
         """Get principal for given ID"""
         if not self.enabled:
             return None
@@ -391,7 +391,7 @@ class LDAPPlugin(Persistent, Contained):
         })
         return LDAPUserInfo(user_dn, attrs, self)
 
-    def _get_groups(self, principal):
+    def _get_groups(self, principal):  # pylint: disable=too-many-branches
         """Get principal groups"""
         principal_dn = principal.attributes.get(DN_ATTRIBUTE)
         if principal_dn is None:
@@ -451,7 +451,7 @@ class LDAPPlugin(Persistent, Contained):
             return result
         return set()
 
-    def get_members(self, group, info=True):
+    def get_members(self, group, info=True):  # pylint: disable=too-many-branches
         """Get all members of given LDAP group as LDAP users"""
         if not self.enabled:
             return
