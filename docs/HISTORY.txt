@@ -1,6 +1,11 @@
 Changelog
 =========
 
+1.1.5
+-----
+ - use Python 3 syntax in super() calls
+ - Pylint cleanups
+
 1.1.4
 -----
  - use constant for principal ID formatter
