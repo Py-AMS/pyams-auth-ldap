@@ -237,7 +237,7 @@ class LDAPPluginSearchResultsTable(Table):
 
     @property
     def data_attributes(self):
-        attributes = super(LDAPPluginSearchResultsTable, self).data_attributes
+        attributes = super().data_attributes
         attributes.setdefault('tr', {}).update({
             'data-ams-url': lambda row, col: absolute_url(self.context, self.request,
                                                           'ldap-properties.html',
@@ -365,7 +365,7 @@ class LDAPEntryPropertiesTable(Table):
     """LDAP entry properties table"""
 
     def __init__(self, context, request, view, manager):
-        super(LDAPEntryPropertiesTable, self).__init__(context, request)
+        super().__init__(context, request)
         self.view = view
         self.manager = manager
 
