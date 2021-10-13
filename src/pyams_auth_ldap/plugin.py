@@ -485,9 +485,8 @@ class LDAPPlugin(Persistent, Contained):
             for user_dn, user_attrs in search.execute(conn, group_dn=group.dn):
                 if info:
                     if self.uid_attribute == DN_ATTRIBUTE:
-                        yield PrincipalInfo(id=USER_DN_PREFIX.format(
-                            prefix=self.prefix,
-                            dn=user_dn),
+                        yield PrincipalInfo(id=USER_DN_PREFIX.format(prefix=self.prefix,
+                                                                     dn=user_dn),
                                             title=self.title_format.format(**user_attrs),
                                             dn=user_dn)
                     else:
@@ -533,10 +532,9 @@ class LDAPPlugin(Persistent, Contained):
                                self.groups_search_scope, attributes)
             for group_dn, group_attrs in search.execute(conn, query=query):
                 if self.group_uid_attribute == DN_ATTRIBUTE:
-                    yield PrincipalInfo(id=GROUP_DN_PREFIX.format(
-                        prefix=self.prefix,
-                        group_prefix=self.group_prefix,
-                        dn=group_dn),
+                    yield PrincipalInfo(id=GROUP_DN_PREFIX.format(prefix=self.prefix,
+                                                                  group_prefix=self.group_prefix,
+                                                                  dn=group_dn),
                                         title=self.group_title_format.format(**group_attrs),
                                         dn=group_dn)
                 else:
