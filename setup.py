@@ -24,7 +24,7 @@ DOCS = os.path.join(os.path.dirname(__file__),
 README = os.path.join(DOCS, 'README.txt')
 HISTORY = os.path.join(DOCS, 'HISTORY.txt')
 
-version = '1.1.3'
+version = '1.1.4'
 long_description = open(README).read() + '\n\n' + open(HISTORY).read()
 
 tests_require = [
@@ -66,7 +66,7 @@ setup(name='pyams_auth_ldap',
           'setuptools',
           # -*- Extra requirements: -*-
           'ldap3',
-          'pyams_security',
+          'pyams_security >= 1.8.1',
           'pyams_utils',
           'pyramid'
       ],

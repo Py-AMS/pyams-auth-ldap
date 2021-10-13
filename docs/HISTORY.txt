@@ -1,6 +1,11 @@
 Changelog
 =========
 
+1.1.4
+-----
+ - use constant for principal ID formatter
+ - added doctests
+
 1.1.3
 -----
  - updated menus context
