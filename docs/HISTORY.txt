@@ -1,6 +1,11 @@
 Changelog
 =========
 
+1.1.6
+-----
+ - PyAMS_security interfaces refactoring
+ - added support for Python 3.10
+
 1.1.5
 -----
  - use Python 3 syntax in super() calls
