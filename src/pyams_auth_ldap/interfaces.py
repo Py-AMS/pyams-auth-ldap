@@ -21,7 +21,7 @@ from zope.interface import Attribute, Interface
 from zope.schema import Choice, TextLine
 from zope.schema.vocabulary import SimpleTerm, SimpleVocabulary
 
-from pyams_security.interfaces import IAuthenticationPlugin, IDirectorySearchPlugin
+from pyams_security.interfaces.plugin import IAuthenticationPlugin, IDirectorySearchPlugin
 
 from pyams_auth_ldap import _
 

@@ -33,7 +33,7 @@ from pyams_auth_ldap.interfaces import ILDAPGroupInfo, ILDAPPlugin, ILDAPUserInf
     INTERNAL_GROUP_MAIL_MODE, NO_GROUP_MAIL_MODE, QUERY_MEMBERS_FROM_GROUP
 from pyams_auth_ldap.query import LDAPQuery
 from pyams_mail.interfaces import IPrincipalMailInfo
-from pyams_security.interfaces import PRINCIPAL_ID_FORMATTER
+from pyams_security.interfaces.names import PRINCIPAL_ID_FORMATTER
 from pyams_security.principal import PrincipalInfo
 from pyams_utils.adapter import ContextAdapter, adapter_config
 from pyams_utils.factory import factory_config
