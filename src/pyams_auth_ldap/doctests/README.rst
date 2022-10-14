@@ -103,6 +103,10 @@ alternate attributes, for example to allow authentication using UID or email add
     >>> plugin.uid_attribute
     'dn'
 
+Please note that *ldap3* packages doesn't allow you to define entries containing spaces in their
+DN; but if you relies on an LDAP server that allows them, that should be handled correctly by
+PyAMS LDAP authentication plugin.
+
 
 Let's try to authenticate using some credentials:
 

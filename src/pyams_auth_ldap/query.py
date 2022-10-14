@@ -28,7 +28,7 @@ class LDAPQuery:
     """Object representing an LDAP query"""
 
     def __init__(self, base_dn, filter_tmpl, scope, attributes):
-        self.base_dn = base_dn
+        self.base_dn = base_dn.replace(' ', '')
         self.filter_tmpl = filter_tmpl
         self.scope = scope
         self.attributes = attributes
