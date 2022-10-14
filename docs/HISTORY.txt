@@ -1,6 +1,10 @@
 Changelog
 =========
 
+1.1.7
+-----
+ - remove spaces from DN when used as query base
+
 1.1.6
 -----
  - PyAMS_security interfaces refactoring
