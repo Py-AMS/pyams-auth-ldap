@@ -16,9 +16,9 @@
 
 import re
 
-from ldap3 import BASE, LEVEL, SUBTREE
+from ldap3 import BASE, LEVEL, SUBTREE, ANONYMOUS, SIMPLE, SASL, NTLM
 from zope.interface import Attribute, Interface
-from zope.schema import Choice, TextLine
+from zope.schema import Bool, Choice, TextLine
 from zope.schema.vocabulary import SimpleTerm, SimpleVocabulary
 
 from pyams_security.interfaces.plugin import IAuthenticationPlugin, IDirectorySearchPlugin
@@ -113,6 +113,11 @@ class ILDAPPlugin(IAuthenticationPlugin, IDirectorySearchPlugin):
                           default="ldap://localhost:389",
                           required=True)
 
+    start_tls = Bool(title=_("Start TLS"),
+                     description=_("Should we start an encrypted connection using StartTLS?"),
+                     required=True,
+                     default=False)
+
     bind_dn = TextLine(title=_("Bind DN"),
                        description=_("DN used for LDAP bind; keep empty for anonymous"),
                        required=False)
@@ -120,6 +125,12 @@ class ILDAPPlugin(IAuthenticationPlugin, IDirectorySearchPlugin):
     bind_password = TextLine(title=_("Bind password"),
                              description=_("Password used for LDAP bind"),
                              required=False)
+
+    bind_mode = Choice(title=_("Bind mode"),
+                       description=_("Authentication mode used for binding"),
+                       values=(ANONYMOUS, SIMPLE, SASL, NTLM),
+                       default=ANONYMOUS,
+                       required=False)
 
     base_dn = TextLine(title=_("Base DN"),
                        description=_("LDAP base DN"),
@@ -155,7 +166,7 @@ class ILDAPPlugin(IAuthenticationPlugin, IDirectorySearchPlugin):
     title_format = TextLine(title=_("Title format"),
                             description=_("Principal's title format string"),
                             required=True,
-                            default='{givenName[0]} {sn[0]}')
+                            default='{givenName} {sn}')
 
     mail_attribute = TextLine(title=_("Mail attribute"),
                               description=_("LDAP attribute storing mail address"),
@@ -191,7 +202,7 @@ class ILDAPPlugin(IAuthenticationPlugin, IDirectorySearchPlugin):
     group_title_format = TextLine(title=_("Group title format"),
                                   description=_("Principal's title format string"),
                                   required=True,
-                                  default='{cn[0]}')
+                                  default='{cn}')
 
     group_members_query_mode = Choice(title=_("Members query mode"),
                                       description=_("Define how groups members are defined"),

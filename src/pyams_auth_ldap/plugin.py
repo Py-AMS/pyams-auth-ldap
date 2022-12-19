@@ -19,7 +19,7 @@ import logging
 import re
 
 from beaker.cache import cache_region
-from ldap3 import ALL_ATTRIBUTES, ASYNC, AUTO_BIND_DEFAULT, AUTO_BIND_NONE, BASE, Connection, \
+from ldap3 import ALL, ALL_ATTRIBUTES, ASYNC, AUTO_BIND_DEFAULT, AUTO_BIND_NONE, BASE, Connection, \
     REUSABLE, Server
 from ldap3.core.exceptions import LDAPBindError
 from ldap3.utils.conv import escape_filter_chars
@@ -32,6 +32,7 @@ from zope.schema.fieldproperty import FieldProperty
 from pyams_auth_ldap.interfaces import ILDAPGroupInfo, ILDAPPlugin, ILDAPUserInfo, \
     INTERNAL_GROUP_MAIL_MODE, NO_GROUP_MAIL_MODE, QUERY_MEMBERS_FROM_GROUP
 from pyams_auth_ldap.query import LDAPQuery
+from pyams_auth_ldap.utils import get_formatted_value, get_single_value
 from pyams_mail.interfaces import IPrincipalMailInfo
 from pyams_security.interfaces.names import PRINCIPAL_ID_FORMATTER
 from pyams_security.principal import PrincipalInfo
@@ -81,8 +82,10 @@ class LDAPUserMailInfoAdapter(ContextAdapter):
 
         mail = user.attributes.get(plugin.mail_attribute)
         if mail:
-            return {(plugin.title_format.format(**user.attributes),
-                     mail[0] if isinstance(mail, (list, tuple)) else mail)}
+            return {(
+                get_formatted_value(plugin.title_format, **user.attributes),
+                mail[0] if isinstance(mail, (list, tuple)) else mail
+            )}
         return set()
 
 
@@ -122,8 +125,8 @@ class LDAPGroupMailInfoAdapter(ContextAdapter):
             # use group internal attribute
             mail = group.attributes.get(plugin.group_mail_attribute)
             if mail:
-                yield plugin.group_title_format.format(**group.attributes), \
-                      mail[0] if isinstance(mail, (list, tuple)) else mail
+                yield get_formatted_value(plugin.group_title_format, **group.attributes), \
+                    mail[0] if isinstance(mail, (list, tuple)) else mail
 
         else:  # REDIRECT_GROUP_MAIL_MODE
             # redirect: use internal attribute of another group
@@ -131,7 +134,7 @@ class LDAPGroupMailInfoAdapter(ContextAdapter):
             target_dn = group.dn.replace(source, target)
             conn = plugin.get_connection()
             attributes = FORMAT_ATTRIBUTES.findall(plugin.group_title_format) + \
-                         [plugin.group_mail_attribute]
+                [plugin.group_mail_attribute]
             search = LDAPQuery(target_dn, ANY_OBJECT_FILTER, BASE, attributes)
             result = search.execute(conn)
             if not result or len(result) > 1:
@@ -139,8 +142,8 @@ class LDAPGroupMailInfoAdapter(ContextAdapter):
             target_dn, attrs = result[0]
             mail = attrs.get(plugin.group_mail_attribute)
             if mail:
-                yield plugin.group_title_format.format(**attrs), \
-                      mail[0] if isinstance(mail, (list, tuple)) else mail
+                yield get_formatted_value(plugin.group_title_format, **attrs), \
+                    mail[0] if isinstance(mail, (list, tuple)) else mail
 
 
 #
@@ -154,13 +157,17 @@ class ConnectionManager:
     """LDAP connections manager"""
 
     _connection = None
+    bound = False
 
-    def __init__(self, plugin):
+    def __init__(self, plugin: ILDAPPlugin):
         self.server = Server(plugin.host,
                              port=plugin.port,
-                             use_ssl=plugin.use_ssl)
+                             use_ssl=plugin.use_ssl,
+                             get_info=ALL)
+        self.start_tls = plugin.start_tls
         self.bind_dn = plugin.bind_dn
         self.password = plugin.bind_password
+        self.authentication = plugin.bind_mode
 
     def get_connection(self, user=None, password=None, read_only=True):
         """Open LDAP connection"""
@@ -168,9 +175,12 @@ class ConnectionManager:
             conn = Connection(self.server,
                               user=user, password=password,
                               client_strategy=ASYNC,
-                              auto_bind=True,
+                              auto_bind=AUTO_BIND_NONE,
                               lazy=False,
                               read_only=read_only)
+            if self.start_tls:
+                conn.start_tls()
+            conn.bind()
         else:
             conn = self._connection
             if conn is None:
@@ -178,11 +188,14 @@ class ConnectionManager:
                 conn = Connection(self.server,
                                   user=self.bind_dn, password=self.password,
                                   client_strategy=REUSABLE,
+                                  authentication=self.authentication,
                                   auto_bind=bind_mode,
                                   lazy=True,
                                   read_only=read_only)
                 if conn.auto_bind == AUTO_BIND_NONE:
                     conn.open(read_server_info=False)
+                if self.start_tls:
+                    conn.start_tls()
                 self._connection = conn
         return conn
 
@@ -203,8 +216,10 @@ class LDAPPlugin(Persistent, Contained):
     connection_manager_class = ConnectionManager
 
     _server_uri = FieldProperty(ILDAPPlugin['server_uri'])
+    start_tls = FieldProperty(ILDAPPlugin['start_tls'])
     bind_dn = FieldProperty(ILDAPPlugin['bind_dn'])
     bind_password = FieldProperty(ILDAPPlugin['bind_password'])
+    bind_mode = FieldProperty(ILDAPPlugin['bind_mode'])
 
     base_dn = FieldProperty(ILDAPPlugin['base_dn'])
     search_scope = FieldProperty(ILDAPPlugin['search_scope'])
@@ -296,6 +311,9 @@ class LDAPPlugin(Persistent, Contained):
         self_id = self._get_id()
         if self_id not in LDAP_MANAGERS:
             LDAP_MANAGERS[self_id] = self.connection_manager_class(self)
+        if not (user and password):
+            user = self.bind_dn
+            password = self.bind_password
         connection = LDAP_MANAGERS[self_id].get_connection(user, password)
         if connection.closed:
             connection.open(read_server_info=False)
@@ -318,6 +336,8 @@ class LDAPPlugin(Persistent, Contained):
         login_dn = result[0]
         try:
             login_conn = self.get_connection(user=login_dn, password=password)
+            if not login_conn.bound:
+                raise LDAPBindError()
             login_conn.unbind()
         except LDAPBindError:
             LOGGER.debug("LDAP authentication exception with login %r", login, exc_info=True)
@@ -329,23 +349,23 @@ class LDAPPlugin(Persistent, Contained):
             attrs = result[1]
             if self.login_attribute in attrs:
                 return USER_ATTR_PREFIX.format(prefix=self.prefix,
-                                               attr=attrs[self.uid_attribute][0])
+                                               attr=get_single_value(attrs[self.uid_attribute]))
             return None
 
     def get_principal(self, principal_id, info=True):  # pylint: disable=too-many-return-statements,too-many-branches
         """Get principal for given ID"""
         if not self.enabled:
             return None
-        if not principal_id.startswith(self.prefix + ':'):
+        if not principal_id.startswith(f'{self.prefix}:'):
             return None
         _prefix, login = principal_id.split(':', 1)
 
         conn = self.get_connection()
 
-        if login.startswith(self.group_prefix + ':'):
+        if login.startswith(f'{self.group_prefix}:'):
             _group_prefix, group_id = login.split(':', 1)
             attributes = FORMAT_ATTRIBUTES.findall(self.group_title_format) + \
-                         [self.group_mail_attribute]
+                [self.group_mail_attribute]
             if self.group_extra_attributes:
                 attributes += self.group_extra_attributes.split(',')
             if self.group_uid_attribute == DN_ATTRIBUTE:
@@ -357,16 +377,17 @@ class LDAPPlugin(Persistent, Contained):
                 return None
             group_dn, attrs = result[0]
             if info:
-                return PrincipalInfo(id=GROUP_ID_PREFIX.format(
-                    prefix=self.prefix,
-                    group_prefix=self.group_prefix,
-                    group_id=group_id),
-                                     title=self.group_title_format.format(**attrs),
-                                     dn=group_dn)
-            attrs.update({'principal_id': GROUP_ID_PREFIX.format(
-                prefix=self.prefix,
-                group_prefix=self.group_prefix,
-                group_id=group_id)})
+                return PrincipalInfo(
+                    id=GROUP_ID_PREFIX.format(prefix=self.prefix,
+                                              group_prefix=self.group_prefix,
+                                              group_id=group_id),
+                    title=get_formatted_value(self.group_title_format, **attrs),
+                    dn=group_dn)
+            attrs.update({
+                'principal_id': GROUP_ID_PREFIX.format(prefix=self.prefix,
+                                                       group_prefix=self.group_prefix,
+                                                       group_id=group_id)
+            })
             return LDAPGroupInfo(group_dn, attrs, self)
 
         attributes = FORMAT_ATTRIBUTES.findall(self.title_format) + [self.mail_attribute]
@@ -383,7 +404,7 @@ class LDAPPlugin(Persistent, Contained):
         if info:
             return PrincipalInfo(id=PRINCIPAL_ID_FORMATTER.format(prefix=self.prefix,
                                                                   login=login),
-                                 title=self.title_format.format(**attrs),
+                                 title=get_formatted_value(self.title_format, **attrs),
                                  dn=user_dn)
         attrs.update({
             'principal_id': PRINCIPAL_ID_FORMATTER.format(prefix=self.prefix,
@@ -467,36 +488,42 @@ class LDAPPlugin(Persistent, Contained):
                     user_search = LDAPQuery(user_dn, ANY_OBJECT_FILTER, BASE, user_attributes)
                     for user_search_dn, user_search_attrs in user_search.execute(conn):
                         if info:
-                            yield PrincipalInfo(id=USER_DN_PREFIX.format(prefix=self.prefix,
-                                                                         dn=user_search_dn),
-                                                title=self.title_format.format(
-                                                    **user_search_attrs),
-                                                dn=user_search_dn)
+                            yield PrincipalInfo(
+                                id=USER_DN_PREFIX.format(prefix=self.prefix,
+                                                         dn=user_search_dn),
+                                title=get_formatted_value(self.title_format,
+                                                          **user_search_attrs),
+                                dn=user_search_dn)
                         else:
-                            yield LDAPUserInfo(dn=user_search_dn, attributes=user_search_attrs,
+                            yield LDAPUserInfo(dn=user_search_dn,
+                                               attributes=user_search_attrs,
                                                plugin=self)
         else:  # QUERY_MEMBERS_FROM_MEMBER
             # member groups are defined into member attribute
             attributes = FORMAT_ATTRIBUTES.findall(self.title_format) + \
-                         [self.uid_attribute, self.mail_attribute]
-            search = LDAPQuery(self.base_dn, GROUP_ATTR_FILTER.format(
-                attribute=self.user_groups_attribute),
+                [self.uid_attribute, self.mail_attribute]
+            search = LDAPQuery(self.base_dn,
+                               GROUP_ATTR_FILTER.format(attribute=self.user_groups_attribute),
                                self.search_scope, attributes)
             for user_dn, user_attrs in search.execute(conn, group_dn=group.dn):
                 if info:
                     if self.uid_attribute == DN_ATTRIBUTE:
-                        yield PrincipalInfo(id=USER_DN_PREFIX.format(prefix=self.prefix,
-                                                                     dn=user_dn),
-                                            title=self.title_format.format(**user_attrs),
-                                            dn=user_dn)
+                        yield PrincipalInfo(
+                            id=USER_DN_PREFIX.format(prefix=self.prefix,
+                                                     dn=user_dn),
+                            title=get_formatted_value(self.title_format, **user_attrs),
+                            dn=user_dn)
                     else:
-                        yield PrincipalInfo(id=USER_ATTR_PREFIX.format(
-                            prefix=self.prefix,
-                            attr=user_attrs[self.uid_attribute][0]),
-                                            title=self.title_format.format(**user_attrs),
-                                            dn=user_dn)
+                        yield PrincipalInfo(
+                            id=USER_ATTR_PREFIX.format(prefix=self.prefix,
+                                                       attr=get_single_value(
+                                                           user_attrs[self.uid_attribute])),
+                            title=get_formatted_value(self.title_format, **user_attrs),
+                            dn=user_dn)
                 else:
-                    yield LDAPUserInfo(dn=user_dn, attributes=user_attrs, plugin=self)
+                    yield LDAPUserInfo(dn=user_dn,
+                                       attributes=user_attrs,
+                                       plugin=self)
 
     def find_principals(self, query, exact_match=False):  # pylint: disable=unused-argument
         """Principals finder"""
@@ -514,36 +541,42 @@ class LDAPPlugin(Persistent, Contained):
                            self.search_scope, attributes)
         for user_dn, user_attrs in search.execute(conn, query=query):
             if self.uid_attribute == DN_ATTRIBUTE:
-                yield PrincipalInfo(id=USER_DN_PREFIX.format(prefix=self.prefix,
-                                                             dn=user_dn),
-                                    title=self.title_format.format(**user_attrs),
-                                    dn=user_dn)
+                yield PrincipalInfo(
+                    id=USER_DN_PREFIX.format(prefix=self.prefix,
+                                             dn=user_dn),
+                    title=get_formatted_value(self.title_format, **user_attrs),
+                    dn=user_dn)
             else:
-                yield PrincipalInfo(id=USER_ATTR_PREFIX.format(
-                    prefix=self.prefix,
-                    attr=user_attrs[self.uid_attribute][0]),
-                                    title=self.title_format.format(**user_attrs),
-                                    dn=user_dn)
+                yield PrincipalInfo(
+                    id=USER_ATTR_PREFIX.format(prefix=self.prefix,
+                                               attr=get_single_value(
+                                                   user_attrs[self.uid_attribute])),
+                    title=get_formatted_value(self.title_format, **user_attrs),
+                    dn=user_dn)
         # groups search
         if self.groups_base_dn:
             attributes = FORMAT_ATTRIBUTES.findall(self.group_title_format) + \
-                         [self.group_uid_attribute, ]
+                [self.group_uid_attribute, ]
             search = LDAPQuery(self.groups_base_dn, self.groups_select_query,
                                self.groups_search_scope, attributes)
             for group_dn, group_attrs in search.execute(conn, query=query):
                 if self.group_uid_attribute == DN_ATTRIBUTE:
-                    yield PrincipalInfo(id=GROUP_DN_PREFIX.format(prefix=self.prefix,
-                                                                  group_prefix=self.group_prefix,
-                                                                  dn=group_dn),
-                                        title=self.group_title_format.format(**group_attrs),
-                                        dn=group_dn)
+                    yield PrincipalInfo(
+                        id=GROUP_DN_PREFIX.format(prefix=self.prefix,
+                                                  group_prefix=self.group_prefix,
+                                                  dn=group_dn),
+                        title=get_formatted_value(self.group_title_format,
+                                                  **group_attrs),
+                        dn=group_dn)
                 else:
-                    yield PrincipalInfo(id=GROUP_ATTR_PREFIX.format(
-                        prefix=self.prefix,
-                        group_prefix=self.group_prefix,
-                        attr=group_attrs[self.group_uid_attribute][0]),
-                                        title=self.group_title_format.format(**group_attrs),
-                                        dn=group_dn)
+                    yield PrincipalInfo(
+                        id=GROUP_ATTR_PREFIX.format(prefix=self.prefix,
+                                                    group_prefix=self.group_prefix,
+                                                    attr=get_single_value(
+                                                        group_attrs[self.group_uid_attribute])),
+                        title=get_formatted_value(self.group_title_format,
+                                                  **group_attrs),
+                        dn=group_dn)
 
     def get_search_results(self, data):
         """Search results getter"""
