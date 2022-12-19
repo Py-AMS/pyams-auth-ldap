@@ -58,16 +58,19 @@ LDAP authentication
 
 Let's try to create a custom LDAP plugin, to mock an LDAP connection:
 
-    >>> from ldap3 import Connection, MOCK_ASYNC
+    >>> from ldap3 import Connection, AUTO_BIND_DEFAULT, MOCK_ASYNC, SIMPLE
     >>> from pyams_auth_ldap.plugin import LDAP_MANAGERS, LDAPPlugin, ConnectionManager
 
     >>> class FakeConnectionManager(ConnectionManager):
     ...     def get_connection(self, user=None, password=None, read_only=True):
-    ...         return Connection(self.server, user=user, password=password,
+    ...         conn = Connection(self.server, user=user, password=password,
     ...                           client_strategy=MOCK_ASYNC,
-    ...                           auto_bind=True,
+    ...                           auto_bind=AUTO_BIND_DEFAULT,
+    ...                           authentication=SIMPLE,
     ...                           lazy=False,
     ...                           read_only=read_only)
+    ...         conn.bound = (user == 'uid=admin,o=pyams.org') and (password == 'my_password')
+    ...         return conn
 
     >>> class FakeLDAPPlugin(LDAPPlugin):
     ...     connection_manager_class = FakeConnectionManager
