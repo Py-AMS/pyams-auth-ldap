@@ -23,10 +23,14 @@ from zope.interface import Interface, implementer
 
 from pyams_auth_ldap.interfaces import ILDAPPlugin, LDAP_PLUGIN_LABEL
 from pyams_auth_ldap.query import LDAPQuery
+from pyams_auth_ldap.utils import get_single_value
+from pyams_auth_ldap.zmi.interfaces import ILDAPPluginConnectionSubform, \
+    ILDAPPluginGroupsSchemaSubform, ILDAPPluginSearchSettingsSubform, \
+    ILDAPPluginUsersSchemaSubform
 from pyams_form.ajax import ajax_form_config
 from pyams_form.browser.checkbox import SingleCheckBoxFieldWidget
 from pyams_form.field import Fields
-from pyams_form.interfaces.form import IInnerTabForm
+from pyams_form.interfaces.form import IFormFields, IInnerTabForm
 from pyams_form.subform import InnerAddForm, InnerEditForm
 from pyams_layer.interfaces import IPyAMSLayer
 from pyams_pagelet.pagelet import pagelet_config
@@ -87,12 +91,12 @@ class LDAPPluginAddForm(SecurityPluginAddForm):
 @adapter_config(name='connection',
                 required=(ISecurityManager, IAdminLayer, LDAPPluginAddForm),
                 provides=IInnerTabForm)
+@implementer(ILDAPPluginConnectionSubform)
 class LDAPPluginConnectionAddForm(InnerAddForm):
     """LDAP plug-in add form connection sub-form"""
 
     title = _("Connection")
 
-    fields = Fields(ILDAPPlugin).select('server_uri', 'bind_dn', 'bind_password')
     weight = 1
 
 
@@ -153,12 +157,12 @@ class LDAPPluginPropertiesEditForm(SecurityPluginPropertiesEditForm):
 @adapter_config(name='connection',
                 required=(ILDAPPlugin, IAdminLayer, LDAPPluginPropertiesEditForm),
                 provides=IInnerTabForm)
+@implementer(ILDAPPluginConnectionSubform)
 class LDAPPluginConnectionEditForm(InnerEditForm):
     """LDAP plug-in connection edit form"""
 
     title = _("Connection")
 
-    fields = Fields(ILDAPPlugin).select('server_uri', 'bind_dn', 'bind_password')
     weight = 1
 
 
@@ -206,6 +210,47 @@ class LDAPPluginSearchSettingsEditForm(InnerEditForm):
                                         'groups_select_query', 'groups_search_query')
     weight = 30
 
+
+#
+# LDAP plug-in sub-forms fields adapters
+#
+
+@adapter_config(required=(Interface, IAdminLayer, ILDAPPluginConnectionSubform),
+                provides=IFormFields)
+def ldap_plugin_connection_fields(context, request, view):  # pylint: disable=unused-argument
+    """LDAP plugin connection fields"""
+    return Fields(ILDAPPlugin).select('server_uri', 'start_tls',
+                                      'bind_dn', 'bind_password', 'bind_mode')
+
+
+@adapter_config(required=(Interface, IAdminLayer, ILDAPPluginUsersSchemaSubform),
+                provides=IFormFields)
+def ldap_plugin_users_schema_fields(context, request, view):  # pylint: disable=unused-argument
+    """LDAP plugin users schema fields"""
+    return Fields(ILDAPPlugin).select('base_dn', 'search_scope', 'login_attribute',
+                                      'login_query', 'uid_attribute', 'uid_query',
+                                      'title_format', 'mail_attribute',
+                                      'user_extra_attributes')
+
+
+@adapter_config(required=(Interface, IAdminLayer, ILDAPPluginGroupsSchemaSubform),
+                provides=IFormFields)
+def ldap_plugin_groups_schema_fields(context, request, view):  # pylint: disable=unused-argument
+    """LDAP plugin groups schema fields"""
+    return Fields(ILDAPPlugin).select('groups_base_dn', 'groups_search_scope', 'group_prefix',
+                                      'group_uid_attribute', 'group_title_format',
+                                      'group_members_query_mode', 'groups_query',
+                                      'group_members_attribute', 'user_groups_attribute',
+                                      'group_mail_mode', 'group_replace_expression',
+                                      'group_mail_attribute', 'group_extra_attributes')
+
+
+@adapter_config(required=(Interface, IAdminLayer, ILDAPPluginSearchSettingsSubform),
+                provides=IFormFields)
+def ldap_plugin_search_settings_fields(context, request, view):  # pylint: disable=unused-argument
+    """LDAP plugin search settings fields"""
+    return Fields(ILDAPPlugin).select('users_select_query', 'users_search_query',
+                                      'groups_select_query', 'groups_search_query')
 
 #
 # LDAP folder search view
@@ -277,7 +322,10 @@ class LDAPPluginSearchUIDColumn(LDAPColumn):
     """LDAP plug-in search UID column"""
 
     i18n_header = _("UID")
-    attr_name = 'uid'
+
+    @property
+    def attr_name(self):
+        return self.context.uid_attribute
 
     weight = 10
 
@@ -324,6 +372,8 @@ class LDAPPluginSearchResultsView(SearchResultsView):
 class LDAPEntryPropertiesDisplayForm(InnerSecurityPluginFormMixin, AdminModalDisplayForm):
     """LDAP entry properties display form"""
 
+    modal_class = 'modal-xl'
+
     @property
     def title(self):
         """Form title getter"""
@@ -345,10 +395,21 @@ class LDAPEntryPropertiesDisplayForm(InnerSecurityPluginFormMixin, AdminModalDis
         if not result or len(result) > 1:
             return {}
         dn, attributes = result[0]  # pylint: disable=invalid-name
-        if 'jpegPhoto' in attributes:
+        photo = attributes.get('jpegPhoto')
+        if photo is not None:
+            if isinstance(photo, list):
+                photo = photo[0]
             attributes['jpegPhoto'] = [
                 '<img src="data:image/jpeg;base64,{0}" />'.format(
-                    base64.encodebytes(attributes['jpegPhoto'][0]).decode())
+                    base64.encodebytes(photo).decode())
+            ]
+        photo = attributes.get('thumbnailPhoto')
+        if photo is not None:
+            if isinstance(photo, list):
+                photo = photo[0]
+            attributes['thumbnailPhoto'] = [
+                '<img src="data:image/jpeg;base64,{0}" />'.format(
+                    base64.encodebytes(photo).decode())
             ]
         result = sorted(attributes.items(), key=lambda x: x[0])
         return {
@@ -357,7 +418,8 @@ class LDAPEntryPropertiesDisplayForm(InnerSecurityPluginFormMixin, AdminModalDis
         }
 
 
-@viewlet_config(name='entry-properties', context=ILDAPPlugin, layer=IAdminLayer,
+@viewlet_config(name='entry-properties',
+                context=ILDAPPlugin, layer=IAdminLayer,
                 view=LDAPEntryPropertiesDisplayForm,
                 manager=IContentSuffixViewletManager)
 @implementer(IInnerTable)
@@ -369,12 +431,18 @@ class LDAPEntryPropertiesTable(Table):
         self.view = view
         self.manager = manager
 
+    batch_size = 999
+
+
+@adapter_config(required=(ILDAPPlugin, IAdminLayer, LDAPEntryPropertiesTable),
+                provides=IValues)
+class LDAPEntryPropertiesTableValues(ContextRequestViewAdapter):
+    """LDAP entry properties table values"""
+
     @property
     def values(self):
         """LDAP entry attributes getter"""
-        yield from self.view.ldap_entry.get('attributes', ())
-
-    batch_size = 999
+        yield from self.view.view.ldap_entry.get('attributes', ())
 
 
 @adapter_config(name='attribute',
@@ -400,4 +468,5 @@ class LDAPEntryValuesColumn(I18nColumnMixin, GetAttrColumn):
     weight = 20
 
     def get_value(self, obj):
-        return '<br />'.join(obj[1] if isinstance(obj[1], (list, tuple)) else {obj[1]})
+        """Value getter"""
+        return get_single_value(obj[1])
