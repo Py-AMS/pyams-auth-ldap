@@ -21,10 +21,10 @@ from setuptools import setup, find_packages
 DOCS = os.path.join(os.path.dirname(__file__),
                     'docs')
 
-README = os.path.join(DOCS, 'README.txt')
-HISTORY = os.path.join(DOCS, 'HISTORY.txt')
+README = os.path.join(DOCS, 'README.rst')
+HISTORY = os.path.join(DOCS, 'HISTORY.rst')
 
-version = '1.1.7'
+version = '1.2.0'
 long_description = open(README).read() + '\n\n' + open(HISTORY).read()
 
 tests_require = [

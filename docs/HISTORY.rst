@@ -1,6 +1,12 @@
 Changelog
 =========
 
+1.2.0
+-----
+ - better interaction with Microsoft Active Directory (AD)
+ - simplified management interface components
+ - added support for Python 3.11
+
 1.1.7
 -----
  - remove spaces from DN when used as query base
