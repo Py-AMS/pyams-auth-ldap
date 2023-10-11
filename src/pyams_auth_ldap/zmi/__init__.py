@@ -280,7 +280,7 @@ class LDAPPluginSearchView(SearchView):
 class LDAPPluginSearchResultsTable(Table):
     """LDAP plug-in search results table"""
 
-    @property
+    @reify
     def data_attributes(self):
         attributes = super().data_attributes
         attributes.setdefault('tr', {}).update({
