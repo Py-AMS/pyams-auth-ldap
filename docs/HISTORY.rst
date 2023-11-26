@@ -1,6 +1,10 @@
 Changelog
 =========
 
+2.0.0
+-----
+ - migrated to Pyramid 2.0
+
 1.2.0
 -----
  - better interaction with Microsoft Active Directory (AD)
