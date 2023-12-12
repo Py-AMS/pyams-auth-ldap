@@ -37,7 +37,7 @@ from pyams_pagelet.pagelet import pagelet_config
 from pyams_security.interfaces import IPlugin, ISecurityManager
 from pyams_security.interfaces.base import MANAGE_SECURITY_PERMISSION
 from pyams_security_views.zmi import SecurityPluginsTable
-from pyams_security_views.zmi.plugin import InnerSecurityPluginFormMixin, SecurityPluginAddForm, \
+from pyams_security_views.zmi.plugin import SecurityPluginAddForm, \
     SecurityPluginAddMenu, SecurityPluginPropertiesEditForm
 from pyams_skin.interfaces.viewlet import IContentSuffixViewletManager
 from pyams_table.column import GetAttrColumn
@@ -47,11 +47,13 @@ from pyams_utils.registry import get_utility
 from pyams_utils.url import absolute_url
 from pyams_viewlet.viewlet import viewlet_config
 from pyams_zmi.form import AdminModalDisplayForm
-from pyams_zmi.interfaces import IAdminLayer
+from pyams_zmi.interfaces import IAdminLayer, TITLE_SPAN_BREAK
+from pyams_zmi.interfaces.form import IFormTitle
 from pyams_zmi.interfaces.table import IInnerTable
 from pyams_zmi.interfaces.viewlet import IContextAddingsViewletManager
 from pyams_zmi.search import SearchForm, SearchResultsView, SearchView
 from pyams_zmi.table import I18nColumnMixin, Table
+from pyams_zmi.utils import get_object_label
 
 
 __docformat__ = 'restructuredtext'
@@ -367,19 +369,13 @@ class LDAPPluginSearchResultsView(SearchResultsView):
 # LDAP entry display view
 #
 
-@pagelet_config(name='ldap-properties.html', context=ILDAPPlugin, layer=IPyAMSLayer,
+@pagelet_config(name='ldap-properties.html',
+                context=ILDAPPlugin, layer=IPyAMSLayer,
                 permission=MANAGE_SECURITY_PERMISSION)
-class LDAPEntryPropertiesDisplayForm(InnerSecurityPluginFormMixin, AdminModalDisplayForm):
+class LDAPEntryPropertiesDisplayForm(AdminModalDisplayForm):
     """LDAP entry properties display form"""
 
     modal_class = 'modal-xl'
-
-    @property
-    def title(self):
-        """Form title getter"""
-        return '{}<br /><small>DN: {}</small>'.format(
-            super().title,
-            self.ldap_entry.get('dn', _('unknown')))
 
     legend = _("LDAP entry attributes")
     fields = Fields(Interface)
@@ -416,6 +412,16 @@ class LDAPEntryPropertiesDisplayForm(InnerSecurityPluginFormMixin, AdminModalDis
             'dn': dn,
             'attributes': result
         }
+
+
+@adapter_config(required=(ILDAPPlugin, IAdminLayer, LDAPEntryPropertiesDisplayForm),
+                provides=IFormTitle)
+def ldap_entry_display_form_title(context, request, form):
+    """LDAP entry display form title getter"""
+    translate = request.localizer.translate
+    return TITLE_SPAN_BREAK.format(
+        get_object_label(context, request, form),
+        translate(_("DN: {}")).format(form.ldap_entry.get('dn', _('unknown'))))
 
 
 @viewlet_config(name='entry-properties',
